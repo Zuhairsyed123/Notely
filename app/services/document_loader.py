@@ -1,6 +1,7 @@
 """Document loader and validator supporting PDF, TXT, and pasted notes."""
 
 import hashlib
+import re
 import uuid
 from pathlib import Path
 
@@ -16,9 +17,50 @@ from app.core.exceptions import (
 )
 from app.core.logging import get_logger
 from app.models.document import Document, DocumentPage
-from app.services.text_cleaner import clean_text, is_meaningful_text
 
 logger = get_logger(__name__)
+
+
+def clean_text(raw_text: str) -> str:
+    """Normalize whitespace and formatting without destroying paragraphs, headings, or lists."""
+    if not raw_text:
+        return ""
+
+    # Normalize line endings
+    text = raw_text.replace("\r\n", "\n").replace("\r", "\n")
+
+    # Normalize non-standard spaces
+    text = text.replace("\u00a0", " ").replace("\u200b", "").replace("\ufeff", "")
+    text = text.replace("\t", "    ")
+
+    # Fix hyphenated line breaks
+    text = re.sub(r"(\b[a-zA-Z]+)-\n\s*([a-zA-Z]+\b)", r"\1\2", text)
+
+    # Process line-by-line
+    lines = text.split("\n")
+    cleaned_lines = []
+    for line in lines:
+        leading_spaces = len(line) - len(line.lstrip(" "))
+        content = re.sub(r"[ ]{2,}", " ", line.strip())
+        if content:
+            if leading_spaces >= 2 and (content.startswith(("-", "*", "•", "1.", "2.", "3.", "4.", "5."))):
+                cleaned_lines.append("  " + content)
+            else:
+                cleaned_lines.append(content)
+        else:
+            cleaned_lines.append("")
+
+    text = "\n".join(cleaned_lines)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
+
+
+def is_meaningful_text(text: str, min_chars: int = 15) -> bool:
+    """Check if the provided string contains meaningful alphanumeric content."""
+    if not text:
+        return False
+    alphanumeric_count = sum(1 for c in text if c.isalnum())
+    return alphanumeric_count >= min_chars
 
 
 class DocumentLoader:

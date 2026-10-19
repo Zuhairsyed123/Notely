@@ -153,7 +153,7 @@ Notely/
 │   └── services/
 │       ├── __init__.py
 │       ├── chunker.py            # Paragraph/sentence sliding-window chunking
-│       ├── document_loader.py    # PyMuPDF extraction, TXT, OCR detection
+│       ├── document_loader.py    # PyMuPDF extraction, TXT, OCR detection, text cleaner
 │       ├── document_store.py     # Thread-safe persistent JSON metadata store
 │       ├── embeddings.py         # SentenceTransformer lazy loader
 │       ├── llm_provider.py       # Mock, OpenAI, Gemini, Groq providers
@@ -162,7 +162,6 @@ Notely/
 │       ├── retriever.py          # Semantic similarity retrieval
 │       ├── study_generator.py    # Flashcard, quiz, revision generators
 │       ├── summarizer.py         # Extractive TF salience & AI summaries
-│       ├── text_cleaner.py       # Whitespace & hyphenation normalization
 │       └── vector_store.py       # ChromaDB client & vector operations
 ├── frontend/
 │   ├── __init__.py

@@ -8,8 +8,11 @@ from app.core.exceptions import (
     ScannedPDFError,
     UnsupportedFileTypeError,
 )
-from app.services.document_loader import DocumentLoader
-from app.services.text_cleaner import clean_text, is_meaningful_text
+from app.services.document_loader import (
+    DocumentLoader,
+    clean_text,
+    is_meaningful_text,
+)
 
 
 def test_clean_text_normalization() -> None:
