@@ -41,17 +41,30 @@ class VectorStoreService:
                 path=str(self.persist_dir),
                 settings=ChromaSettings(anonymized_telemetry=False),
             )
-        # Using cosine similarity metric
-        self._collection = self._client.get_or_create_collection(
-            name=self.collection_name,
-            metadata={"hnsw:space": "cosine"},
-        )
+        self._collection = None
         logger.info(
-            "VectorStore initialized (in_memory=%s, collection=%s) with %d existing vectors",
+            "VectorStore initialized (in_memory=%s, collection=%s)",
             self.in_memory,
             self.collection_name,
-            self._collection.count(),
         )
+
+    @property
+    def collection(self) -> Any:
+        """Ensure collection reference is always valid and refreshed if dropped."""
+        if self._collection is None:
+            self._collection = self._client.get_or_create_collection(
+                name=self.collection_name,
+                metadata={"hnsw:space": "cosine"},
+            )
+        else:
+            try:
+                _ = self._collection.count()
+            except Exception:
+                self._collection = self._client.get_or_create_collection(
+                    name=self.collection_name,
+                    metadata={"hnsw:space": "cosine"},
+                )
+        return self._collection
 
     def clear(self) -> None:
         """Purge and recreate the current collection."""
@@ -77,7 +90,7 @@ class VectorStoreService:
         embeddings = self.embedding_service.embed_texts(texts)
 
         # Upsert into Chroma (prevents duplicates by ID)
-        self._collection.upsert(
+        self.collection.upsert(
             ids=ids,
             embeddings=embeddings,
             documents=texts,
@@ -93,7 +106,7 @@ class VectorStoreService:
         document_id: str | None = None,
     ) -> list[dict[str, Any]]:
         """Search the collection using cosine similarity of query embedding against indexed chunks."""
-        count = self._collection.count()
+        count = self.collection.count()
         if count == 0:
             logger.info("Vector store is empty, returning 0 results.")
             return []
@@ -103,7 +116,7 @@ class VectorStoreService:
 
         where_filter = {"document_id": document_id} if document_id else None
 
-        results = self._collection.query(
+        results = self.collection.query(
             query_embeddings=[query_vector],
             n_results=effective_k,
             where=where_filter,
@@ -147,10 +160,10 @@ class VectorStoreService:
         """Delete all chunk vectors belonging to a specific document ID."""
         try:
             # Query existing chunk count for this document
-            existing = self._collection.get(where={"document_id": document_id})
+            existing = self.collection.get(where={"document_id": document_id})
             num_chunks = len(existing["ids"]) if existing and "ids" in existing else 0
             if num_chunks > 0:
-                self._collection.delete(where={"document_id": document_id})
+                self.collection.delete(where={"document_id": document_id})
                 logger.info("Deleted %d chunk vectors for document %s", num_chunks, document_id)
             return num_chunks
         except Exception as e:
@@ -160,14 +173,14 @@ class VectorStoreService:
     def get_chunk_count(self) -> int:
         """Return total number of vectors in the collection."""
         try:
-            return self._collection.count()
+            return self.collection.count()
         except Exception:
             return 0
 
     def get_chunks_for_document(self, document_id: str) -> list[dict[str, Any]]:
         """Retrieve stored chunks for a specific document without semantic search."""
         try:
-            res = self._collection.get(
+            res = self.collection.get(
                 where={"document_id": document_id},
                 include=["documents", "metadatas"],
             )
