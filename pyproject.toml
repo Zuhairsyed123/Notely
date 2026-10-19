@@ -1,0 +1,36 @@
+[project]
+name = "notely"
+version = "0.1.0"
+description = "Your notes. Smarter. Complete AI-Powered RAG Study Assistant"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.8.0",
+    "pydantic-settings>=2.4.0",
+    "python-multipart>=0.0.9",
+    "pymupdf>=1.24.0",
+    "sentence-transformers>=3.0.0",
+    "chromadb>=0.5.0",
+    "streamlit>=1.37.0",
+    "plotly>=5.22.0",
+    "httpx>=0.27.0",
+    "pytest>=8.3.0",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.0",
+    "ruff>=0.5.0",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+pythonpath = ["."]

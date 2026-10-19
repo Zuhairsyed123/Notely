@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments & Virtual Envs
+.env
+.env.local
+.venv
+venv/
+ENV/
+env/
+
+# Data & Persistence
+data/documents/
+data/chroma/
+data/metadata.json
+data/*.db
+data/*.sqlite3
+!data/.gitkeep
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Chroma & HuggingFace cache
+.chroma/
+.cache/
