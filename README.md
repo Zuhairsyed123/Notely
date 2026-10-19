@@ -6,7 +6,7 @@ Notely is an end-to-end, local-first Retrieval-Augmented Generation (RAG) study 
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 - **Document Ingestion & Extraction**:
   - Multi-page PDF text extraction with page provenance tracking using PyMuPDF.
@@ -48,7 +48,7 @@ Notely is an end-to-end, local-first Retrieval-Augmented Generation (RAG) study 
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```mermaid
 graph TD
@@ -114,7 +114,7 @@ graph TD
 
 ---
 
-## 🔬 How the RAG Pipeline Works
+## How the RAG Pipeline Works
 
 1. **Ingestion**: When a PDF or note is uploaded, PyMuPDF extracts raw text page-by-page. The text cleaner normalizes irregular whitespace and hyphenated line breaks.
 2. **Chunking**: The document is partitioned into semantic segments based on paragraph boundaries, sentences, and configured character limits (default: 500 characters, 100 character overlap).
@@ -124,7 +124,7 @@ graph TD
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 Notely/
@@ -190,7 +190,7 @@ Notely/
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - Python 3.10+ (tested on Python 3.10, 3.11, 3.12, 3.13, 3.14)
@@ -225,7 +225,7 @@ pip install -r requirements.txt
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Copy `.env.example` to `.env`:
 ```powershell
@@ -259,7 +259,7 @@ cp .env.example .env
 
 ---
 
-## 🖥️ Running the Application
+## Running the Application
 
 ### Option A: Run Both Services Concurrently (Recommended)
 
@@ -284,7 +284,7 @@ Notely's client automatically detects that the HTTP server is offline and switch
 
 ---
 
-## 🧪 Running Automated Tests
+## Running Automated Tests
 
 Run the full automated test suite:
 ```powershell
@@ -309,7 +309,7 @@ ruff check .
 
 ---
 
-## 📖 Example Walkthrough
+## Example Walkthrough
 
 1. **Upload or Paste**: Open `http://127.0.0.1:8501` and navigate to **My Documents**. In the *Paste Text Notes* tab, enter a title like `Biology: Cellular Respiration` and paste your lecture notes. Click **Save & Index Notes**.
 2. **Inspect Chunks**: Go to **Chunk Explorer**. Adjust the target chunk size (e.g., 300 characters) and overlap (e.g., 50 characters). Click **Inspect Chunks** to view the exact text segments indexed in ChromaDB.
@@ -322,7 +322,7 @@ ruff check .
 
 ---
 
-## ⚠️ Known Limitations
+## Known Limitations
 
 1. **Scanned Images in PDFs**: Pure scanned PDFs (images without an OCR text layer) cannot be parsed directly by PyMuPDF. Notely detects these documents and presents an informative warning explaining that OCR pre-processing is required.
 2. **Single-User Architecture**: Notely is designed as a local-first study assistant. It uses local thread-safe JSON metadata and ChromaDB persistence without authentication or multi-tenant user isolation.
@@ -330,7 +330,7 @@ ruff check .
 
 ---
 
-## 🔮 Future Improvements
+## Future Improvements
 
 - Tesseract or Apple Vision OCR integration for direct scanned image PDF extraction.
 - Cross-encoder re-ranking (e.g. `bge-reranker`) to further refine top-k retrieval precision.
